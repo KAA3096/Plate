@@ -1,4 +1,5 @@
 import streamlit as st
+import qrcode
 
 st.set_page_config(page_title="👋", layout="wide")
 
@@ -75,6 +76,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
+
+qr = qrcode.make("https://github.com/KAA3096/Plate")
+qr.save("qr_github.png")
 
 with col1:
     st.subheader("🔗 GitHub-репозиторий")
