@@ -64,7 +64,7 @@ st.markdown("""
     </p>
     <p style="text-align:left; font-size: 18px;">
         Данный проект можно посмотреть и скачать на 
-        <a href="https://github.com/nkt50i/cylinder" target="_blank" style="font-weight: bold;">
+        <a href="https://github.com/KAA3096/Plate" target="_blank" style="font-weight: bold;">
         GitHub</a>.
     </p>
     <p style="text-align:left; font-size: 18px;">
@@ -78,7 +78,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.subheader("🔗 GitHub-репозиторий")
-    st.image("qr_github.png", caption="cylinder", width=250)
+    st.image("qr_github.png", caption="Plate", width=250)
 
 with col2:
     st.subheader("📄 Источник")
