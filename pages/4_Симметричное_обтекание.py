@@ -7,6 +7,7 @@ menu = st.sidebar.radio(
         "Аппроксимация полиномами степени $p=1,2,3$",
         "Циркулляция",
         "Полувысота",
+        "Программная реализация",
     )
 )
 
@@ -41,7 +42,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
 
     if mesh_size == "985":
         if poly_degree == "p = 1":
-            load_gif("985_p1.gif")
+            load_gif("/home/anastasia/Документы/rep/985_p1.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 985
@@ -56,7 +57,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             """
             
         elif poly_degree == "p = 2":
-            load_gif("985_p2.gif")
+            load_gif("/home/anastasia/Документы/rep/985_p2.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 985
@@ -71,7 +72,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             """
             
         elif poly_degree == "p = 3":
-            load_gif("985_p3.gif")
+            load_gif("/home/anastasia/Документы/rep/985_p3.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 985
@@ -86,7 +87,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             """
     if mesh_size == "3738":
         if poly_degree == "p = 1":
-            load_gif("3738_p1.gif")
+            load_gif("/home/anastasia/Документы/rep/3738_p1.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 3738
@@ -101,7 +102,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             """
             
         elif poly_degree == "p = 2":
-            load_gif("3738_p2.gif")
+            load_gif("/home/anastasia/Документы/rep/3738_p2.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 3738
@@ -116,7 +117,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             """
             
         elif poly_degree == "p = 3":
-            load_gif("3738_p3.gif")
+            load_gif("/home/anastasia/Документы/rep/3738_p3.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 3738
@@ -132,7 +133,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             
     if mesh_size == "14788":
         if poly_degree == "p = 1":
-            load_gif("14788_p1.gif")
+            load_gif("/home/anastasia/Документы/rep/14788_p1.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 14788
@@ -147,7 +148,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             """
             
         elif poly_degree == "p = 2":
-            load_gif("14788_p2.gif")
+            load_gif("/home/anastasia/Документы/rep/14788_p2.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 14788
@@ -162,7 +163,7 @@ if menu == "Аппроксимация полиномами степени $p=1,
             """
             
         elif poly_degree == "p = 3":
-            load_gif("14788_p3.gif")
+            load_gif("/home/anastasia/Документы/rep/14788_p3.gif")
             r"""
             -----------------------------------------------
             * Число ячеек сетки: 14788
@@ -186,7 +187,7 @@ if menu == "Циркулляция":
     )
     
     if gamma == "-1":
-        load_gif("gamma_1.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_1.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -200,7 +201,7 @@ if menu == "Циркулляция":
             ------------------------------------------------
         """
     if gamma == "-2":
-        load_gif("gamma_2.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_2.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -214,7 +215,7 @@ if menu == "Циркулляция":
             ------------------------------------------------
         """
     if gamma == "-3":
-        load_gif("gamma_3.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_3.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -228,7 +229,7 @@ if menu == "Циркулляция":
             ------------------------------------------------
         """
     if gamma == "-4":
-        load_gif("gamma_4.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_4.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -242,7 +243,7 @@ if menu == "Циркулляция":
             ------------------------------------------------
         """
     if gamma == "-5":
-        load_gif("gamma_5.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_5.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -256,7 +257,7 @@ if menu == "Циркулляция":
             ------------------------------------------------
         """
     if gamma == "-6":
-        load_gif("gamma_6.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_6.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -270,7 +271,7 @@ if menu == "Циркулляция":
             ------------------------------------------------
         """
     if gamma == "-7":
-        load_gif("gamma_7.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_7.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -283,7 +284,7 @@ if menu == "Циркулляция":
             * p=1
         """
     if gamma == "-8":
-        load_gif("gamma_8.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_8.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -297,7 +298,7 @@ if menu == "Циркулляция":
             ------------------------------------------------
         """
     if gamma == "-9":
-        load_gif("gamma_9.gif")
+        load_gif("/home/anastasia/Документы/rep/gamma_9.gif")
         r"""
             -----------------------------------------------
             * Число ячеек сетки: 366098
@@ -318,10 +319,107 @@ if menu == "Полувысота":
     
     height = st.selectbox(
         "Полувысота пластины",  
-        ["985", "3738", "14788"]  
-    )    
+        ["0.1", "3738", "14788"]  
+    )
+    
+    if height == "0.1":
+        load_gif("/home/anastasia/Документы/rep/height_01.gif")
+        r"""
+            -----------------------------------------------
+            * Число ячеек сетки: 366098
+            * Число узлов сетки: 184150
+            * Число искомых дискретных значений: 184150
+            * Макс. завихренность: 8.913647
+            * Мин. завихренность: -46.390642
+            * Итераций:23
+            * Gamma = -1.5
+            * omega_0 = -1.5
+            * p=1
+            ------------------------------------------------
+        """
+    
+if menu == "Программная реализация":
+    r"""
+    ##### Программная реализация
+    """
+    
+    with st.expander("Определение функционального пространства"):
+        code = """
+            mesh = Mesh("plate.xml")
+            boundaries = MeshFunction("size_t", mesh, "plate_facet_region.xml")
+            ds = Measure("ds", subdomain_data=boundaries)
+
+            deg = 1
+            V = FunctionSpace(mesh, "CG", deg)
+        """
+        st.code(code, language="python")
+        
+    with st.expander("Граничные условия"):
+        code = """
+        u_l = Expression("x[1]", degree=deg)
+        u_r = Expression("x[1]", degree=deg)
+        u_t = Expression("x[1]", degree=deg)
+        u_b = Expression("0.0", degree=deg)
+
+        bcs1 = [DirichletBC(V, u_l, boundaries, 2),
+                DirichletBC(V, u_r, boundaries, 3),
+                DirichletBC(V, u_t, boundaries, 4),
+                DirichletBC(V, u_b, boundaries, 5)]
+
+        """
+        st.code(code, language="python")
+        
+    with st.expander("Начальные условия"):
+        code = """
+        Gamma = -2.0
+        omega_0 = '-2.0'
+        omega_k = Function(V)
+        omega_k.interpolate(Expression(omega_0, degree=deg))
+        u_k = Function(V)
+
+        """
+        st.code(code, language="python")
+        
+    with st.expander("Итерационный процесс"):
+        code = """
+        max_iter = 500
+        tolerance = 1e-12
+
+        for k in range(max_iter):
+            print(f"\n== Итерация {k} ==")
+            a = dot(grad(u), grad(TestFunction(V))) * dx
+            L = omega_k * TestFunction(V) * dx
+            solve(a == L, u_k, bcs1)
+
+
+            indicator = conditional(lt(u_k, 0.0), 1.0, 0.0)
+            area = assemble(indicator * dx)
+
+            if near(area, 0.0):
+                print("Область ψ < 0 исчезла, остановка итераций")
+        """
+        st.code(code, language="python")
+    with st.expander("Проверка сходимости"):
+        code = """
+       if k > 0:
+        change = errornorm(u_k, u_prev, 'L2')
+        print(f"Change: {change}")
+        if change < tolerance:
+            print("Достигнута сходимость")
+            break
+        """
+        st.code(code, language="python")
+           
+    
+        
+
+
+        
     
     
+        
+
+
     
 
 
