@@ -1,5 +1,4 @@
 import streamlit as st
-from PIL import Image
 
 menu = st.sidebar.radio('***',
     ("Уравнение для функции тока", 
