@@ -11,7 +11,7 @@ mesh = Mesh("plate.xml")
 boundaries = MeshFunction("size_t", mesh, "plate_facet_region.xml")
 ds = Measure("ds", subdomain_data=boundaries)
 
-deg = 2
+deg = 1
 V = FunctionSpace(mesh, "CG", deg)
 
 # === Информации о сетке и числе искомых величин ===
@@ -35,8 +35,8 @@ u_r = Expression("x[1]", degree=deg)
 u_t = Expression("x[1]", degree=deg)
 u_b = Expression("0.0", degree=deg)
 
-bcs1 = [#DirichletBC(V, u_l, boundaries, 2),
-        #DirichletBC(V, u_r, boundaries, 3),
+bcs1 = [DirichletBC(V, u_l, boundaries, 2),
+        DirichletBC(V, u_r, boundaries, 3),
         DirichletBC(V, u_t, boundaries, 4),
         DirichletBC(V, u_b, boundaries, 5)]
 
@@ -58,7 +58,7 @@ output_dir = "frames"
 os.makedirs(output_dir, exist_ok=True)
 
 # === Итерационный процесс ===
-max_iter = 10
+max_iter = 500
 tolerance = 1e-12
 
 for k in range(max_iter):
@@ -67,16 +67,11 @@ for k in range(max_iter):
     L = omega_k * TestFunction(V) * dx
     solve(a == L, u_k, bcs1)
 
-    X, Y = SpatialCoordinate(mesh)
-    indicator = conditional(
-        lt(u_k, 0.0),
-        conditional(And(gt(X, 1.65), And(gt(Y, 0.0), lt(Y, 0.5))),
-                    1.0, 0.0),
-        0.0
-    )
-    area_negative_u = assemble(indicator * dx)
 
-    if near(area_negative_u, 0.0):
+    indicator = conditional(lt(u_k, 0.0), 1.0, 0.0)
+    area = assemble(indicator * dx)
+
+    if near(area, 0.0):
         print("Область ψ < 0 исчезла, остановка итераций")
 
         # === Визуализация и сохранение кадров ===
@@ -88,8 +83,8 @@ for k in range(max_iter):
 
         # Чёрные линии уровня
         contour = plt.tricontour(x, y, triangles, u_values,
-                                levels=np.linspace(-1, 1, 40),
-                                colors='black', linewidths=0.5)
+                                levels=np.linspace(-1, 1, 50),
+                                colors='black', linewidths=1.0)
 
         # Подписи значений на линиях
         plt.clabel(contour, fmt="%.2f", colors='black', fontsize=8)
@@ -101,31 +96,21 @@ for k in range(max_iter):
         cbar = plt.colorbar(contourf)
         cbar.set_label("Функция тока ")
         plt.title(f"Iteration {k}")
-        plt.colorbar(contourf)
+        
         filename = f"{output_dir}/frame_{k:03d}.png"
         plt.savefig(filename)
         plt.close()
         image_files.append(filename)
-        if near(area_negative_u, 0.0):
+        if near(area, 0.0):
             print("Указанная область пуста.")
         else:
             print(f"Макс. завихренность: {np.max(omega_array):.6f}")
             print(f"Мин. завихренность: {np.min(omega_array):.6f}")
         break
         
-
-    omega_expr = conditional(
-        lt(u_k, 0.0),
-        conditional(And(gt(X, 1.65), And(gt(Y, 0.0), lt(Y, 0.5))),
-                    Constant(Gamma / area_negative_u),
-                    Constant(0.0)),
-        Constant(0.0)
-    )
-
-    omega_k = project(omega_expr, V)
-    #omega_new = project(conditional(lt(u_k, 0.0), Constant(Gamma/area_negative_u), Constant(0.0)), V)
+    omega_k = project(conditional(lt(u_k, 0.0), Constant(Gamma/area), Constant(0.0)), V)
     omega_array = omega_k.vector().get_local()
-    if near(area_negative_u, 0.0):
+    if near(area, 0.0):
         print("Указанная область пуста.")
     else:
         print(f"Макс. завихренность: {np.max(omega_array):.6f}")
@@ -141,7 +126,7 @@ for k in range(max_iter):
     # Чёрные линии уровня
     contour = plt.tricontour(x, y, triangles, u_values,
                             levels=np.linspace(-1, 1, 40),
-                            colors='black', linewidths=0.5)
+                            colors='black', linewidths=1.0)
 
     # Подписи значений на линиях
     plt.clabel(contour, fmt="%.2f", colors='black', fontsize=8)
