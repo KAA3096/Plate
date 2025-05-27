@@ -69,11 +69,6 @@ st.markdown("""
         <a href="https://github.com/KAA3096/Plate" target="_blank" style="font-weight: bold;">
         GitHub</a>.
     </p>
-    <p style="text-align:left; font-size: 18px;">
-        Ознакомиться с основным истоником информации можно по ссылке 
-        <a href="https://kpfu.ru//staff_files/F916745654/Maklakov_AM_D_Part1.pdf" target="_blank" style="font-weight: bold;">
-        источник</a>.
-    </p>
 """, unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
@@ -81,7 +76,3 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("🔗 GitHub-репозиторий")
     st.image("qr_github.png", caption="Plate", width=250)
-
-with col2:
-    st.subheader("📄 Источник")
-    st.image("qr_paper.png", caption="Маклаков Д. В. Аналитические методы гидродинамики.", width=250)
