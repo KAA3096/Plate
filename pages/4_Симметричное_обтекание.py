@@ -463,67 +463,72 @@ if menu == "Программная реализация":
     
     with st.expander("Определение функционального пространства"):
         code = """
-            mesh = Mesh("plate.xml")
-            boundaries = MeshFunction("size_t", mesh, "plate_facet_region.xml")
-            ds = Measure("ds", subdomain_data=boundaries)
-
-            deg = 1
-            V = FunctionSpace(mesh, "CG", deg)
+            mesh = Mesh("plate.xml")  # Загрузка сетки из файла
+            boundaries = MeshFunction("size_t", mesh, "plate_facet_region.xml")  # Загрузка разметки границ
+            ds = Measure("ds", subdomain_data=boundaries)  # Интегральная мера для границ
+            
+            deg = 1  # Степень базисных функций
+            V = FunctionSpace(mesh, "CG", deg)  # Построение пространства Конечных Элементов (лагранжевы элементы 1-го порядка)
         """
         st.code(code, language="python")
         
     with st.expander("Граничные условия"):
         code = """
-        u_l = Expression("x[1]", degree=deg)
-        u_r = Expression("x[1]", degree=deg)
-        u_t = Expression("x[1]", degree=deg)
-        u_b = Expression("0.0", degree=deg)
-
-        bcs1 = [DirichletBC(V, u_l, boundaries, 2),
-                DirichletBC(V, u_r, boundaries, 3),
-                DirichletBC(V, u_t, boundaries, 4),
-                DirichletBC(V, u_b, boundaries, 5)]
+            u_l = Expression("x[1]", degree=deg)  # Значение на левой границе (координата Y)
+            u_r = Expression("x[1]", degree=deg)  # Значение на правой границе
+            u_t = Expression("x[1]", degree=deg)  # Значение на верхней границе
+            u_b = Expression("0.0", degree=deg)  # Значение на нижней границе (ноль)
+            
+            bcs1 = [
+                DirichletBC(V, u_l, boundaries, 2),  # Применение условия к границе с меткой 2
+                DirichletBC(V, u_r, boundaries, 3),  # ... метка 3
+                DirichletBC(V, u_t, boundaries, 4),  # ... метка 4
+                DirichletBC(V, u_b, boundaries, 5)   # ... метка 5
+            ]
 
         """
         st.code(code, language="python")
         
     with st.expander("Начальные условия"):
         code = """
-        Gamma = -2.0
-        omega_0 = '-2.0'
-        omega_k = Function(V)
-        omega_k.interpolate(Expression(omega_0, degree=deg))
-        u_k = Function(V)
-
+            Gamma = -2.0  # Параметр задачи
+            omega_0 = '-2.0'  # Начальное значение правой части уравнения
+            omega_k = Function(V)  # Функция для правой части
+            omega_k.interpolate(Expression(omega_0, degree=deg))  # Инициализация константой -2.0
+            u_k = Function(V)  # Функция для решения (текущая итерация)
         """
         st.code(code, language="python")
         
     with st.expander("Итерационный процесс"):
         code = """
-        max_iter = 500
-        tolerance = 1e-12
-
-        for k in range(max_iter):
-            print(f"\n== Итерация {k} ==")
-            a = dot(grad(u), grad(TestFunction(V))) * dx
-            L = omega_k * TestFunction(V) * dx
-            solve(a == L, u_k, bcs1)
-
-
-            indicator = conditional(lt(u_k, 0.0), 1.0, 0.0)
-            area = assemble(indicator * dx)
-
-            if near(area, 0.0):
-                print("Область ψ < 0 исчезла, остановка итераций")
+            max_iter = 500  # Максимальное число итераций
+            tolerance = 1e-12  # Допуск сходимости
+            
+            for k in range(max_iter):
+                # Вариационная формулировка уравнения Пуассона:
+                a = dot(grad(u), grad(TestFunction(V))) * dx  # Билинейная форма (левая часть)
+                L = omega_k * TestFunction(V) * dx  # Линейная форма (правая часть)
+                
+                # Решение вариационной задачи:
+                solve(a == L, u_k, bcs1)  # -Δu = ω с граничными условиями bcs1
+            
+                # Вычисление области, где решение отрицательно:
+                indicator = conditional(lt(u_k, 0.0), 1.0, 0.0)  # Индикаторная функция (1 где u_k < 0)
+                area = assemble(indicator * dx)  # Площадь области с u_k < 0
+            
+                # Критерий останова 1: исчезновение отрицательной области
+                if near(area, 0.0):
+                    print("Область ψ < 0 исчезла, остановка итераций")
+                    break
         """
         st.code(code, language="python")
     with st.expander("Проверка сходимости"):
         code = """
-       if k > 0:
-        change = errornorm(u_k, u_prev, 'L2')
-        print(f"Change: {change}")
-        if change < tolerance:
-            print("Достигнута сходимость")
-            break
+            if k > 0:
+                change = errornorm(u_k, u_prev, 'L2')  # L2-норма разницы с предыдущей итерацией
+                print(f"Change: {change}")
+                if change < tolerance:
+                    print("Достигнута сходимость")
+                    break
         """
         st.code(code, language="python")
