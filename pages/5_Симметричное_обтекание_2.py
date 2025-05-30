@@ -9,6 +9,7 @@ menu = st.sidebar.radio(
         "Сравнение результатов",
         "Циркулляция",
         "Полувысота",
+        "Программная реализация"
     )
 )
 
@@ -355,4 +356,140 @@ if menu == "Полувысота":
             * p = 1
             ------------------------------------------------
         """
-    
+if menu == "Программная реализация":
+    r"""
+    ##### Программная реализация
+    """
+        with st.expander("Определение функционального пространства"):
+        code = """
+            mesh = Mesh("minminplate.xml")                       # Загрузка сетки
+            boundaries = MeshFunction("size_t", mesh, "minminplate_facet_region.xml")  # Загрузка границ
+            ds = Measure("ds", subdomain_data=boundaries)        # Мера для граничных интегралов
+            
+            deg = 1                                              # Степень аппроксимации
+            V = FunctionSpace(mesh, "CG", deg)                   # Функциональное пространство
+        """
+        st.code(code, language="python")
+        
+    with st.expander("Информация о сетке"):
+        code = """
+            n_c = mesh.num_cells()                               # Число ячеек
+            n_v = mesh.num_vertices()                            # Число вершин
+            n_d = V.dim()                                        # Число степеней свободы
+            n = FacetNormal(mesh)                                # Нормали к граням
+            
+            print(f"Число ячеек сетки: {n_c}")                   # Вывод информации
+            print(f"Число узлов сетки: {n_v}")
+            print(f"Число искомых дискретных значений: {n_d}")
+
+        """
+        st.code(code, language="python")
+        
+    with st.expander("Вариационная постановка задачи"):
+        code = """
+            u = TrialFunction(V)                                 # Пробная функция (ψ)
+            v = TestFunction(V)                                  # Тестовая функция
+            f = Constant(0.0)                                    # Правая часть (0 для уравнения Пуассона)
+        """
+        st.code(code, language="python")
+        
+    with st.expander("Граничные условия"):
+        code = """
+            u_l = Expression("x[1]", degree=deg)                 # Выражения для границ
+            u_r = Expression("x[1]", degree=deg)
+            u_t = Expression("x[1]", degree=deg)
+            u_b = Expression("0.0", degree=deg)
+            
+            bcs1 = [                                             # Граничные условия:
+                    #DirichletBC(V, u_l, boundaries, 2),        # Левая граница (закомментирована)
+                    #DirichletBC(V, u_r, boundaries, 3),        # Правая граница (закомментирована)
+                    DirichletBC(V, u_t, boundaries, 4),         # Верхняя граница (ψ = y)
+                    DirichletBC(V, u_b, boundaries, 5)]         # Нижняя граница (ψ = 0)
+        """
+        st.code(code, language="python")
+        
+    with st.expander("Начальные условия"):
+        code = """
+            Gamma = -2.0                                         # Заданная циркуляция
+            omega_0 = '-2.0'                                     # Начальная завихренность
+            omega_k = Function(V)                                # Функция для завихренности
+            omega_k.interpolate(Expression(omega_0, degree=deg)) # Инициализация ω
+            u_k = Function(V)                                    # Функция для ψ
+        """
+        st.code(code, language="python")
+
+    with st.expander("Основной итерационный цикл"):
+        code = """
+            # === Итерационный процесс ===
+            max_iter = 20                                        # Максимальное количество итераций
+            tolerance = 1e-12                                    # Допустимая погрешность для сходимости
+            
+            u_prev = None                                        # Переменная для хранения предыдущего решения
+            
+            for k in range(max_iter):                            # Основной итерационный цикл
+                print(f"\n== Итерация {k} ==")
+                
+                # === Вариационное решение уравнения Пуассона ===
+                # Формулировка слабой формы: ∫∇ψ·∇v dx = ∫ω v dx
+                a = dot(grad(u), grad(v)) * dx                   # Билинейная форма (левая часть)
+                L = omega_k * v * dx                             # Линейная форма (правая часть)
+                solve(a == L, u_k, bcs1)                         # Решение вариационной задачи с граничными условиями
+            
+                # === Определение вихревой зоны ===
+                X, Y = SpatialCoordinate(mesh)                   # Получение пространственных координат
+                
+                # Индикаторная функция для области с отрицательной функцией тока
+                # и в заданной прямоугольной области [x>1.65, 0<y<0.5]
+                indicator = conditional(                         
+                    lt(u_k, 0.0),                               # Условие: ψ < 0
+                    conditional(                                 # Дополнительное ограничение области
+                        And(gt(X, 1.65), And(gt(Y, 0.0), lt(Y, 0.5))),
+                        1.0, 0.0),
+                    0.0
+                )
+                
+                # === Вычисление площади вихревой зоны ===
+                area_negative_u = assemble(indicator * dx)       # Численное интегрирование индикаторной функции
+                
+                # === Проверка на исчезновение вихревой зоны ===
+                if near(area_negative_u, 0.0):
+                    print("Область ψ < 0 исчезла, остановка итераций")
+                    break                                        # Прерывание цикла при отсутствии вихревой зоны
+            
+                # === Обновление завихренности в вихревой зоне ===
+                # Выражение для новой завихренности:
+                # ω = Γ/S в области ψ<0 и в заданном прямоугольнике, иначе 0
+                omega_expr = conditional(
+                    lt(u_k, 0.0),                               # Только в области с ψ < 0
+                    conditional(                                 # Дополнительное ограничение области
+                        And(gt(X, 1.65), And(gt(Y, 0.0), lt(Y, 0.5))),
+                        Constant(Gamma / area_negative_u),      # Равномерное распределение завихренности
+                        Constant(0.0)),
+                    Constant(0.0)
+                )
+                
+                # Проекция выражения завихренности в функциональное пространство
+                omega_k = project(omega_expr, V)
+                
+                # Получение значений завихренности в узлах сетки
+                omega_array = omega_k.vector().get_local()       
+                print(f"Макс. завихренность: {np.max(omega_array):.6f}")  # Вывод максимального значения
+                print(f"Мин. завихренность: {np.min(omega_array):.6f}")   # Вывод минимального значения
+            
+                # === Проверка сходимости ===
+                if k > 0:
+                    # Вычисление L2-нормы разницы между текущим и предыдущим решением
+                    change = errornorm(u_k, u_prev, 'L2')        
+                    print(f"Изменение решения: {change}")
+                    
+                    # Проверка критерия сходимости
+                    if change < tolerance:                       
+                        print("Достигнута сходимость")
+                        break                                    # Прерывание цикла при достижении сходимости
+                
+                # === Сохранение текущего решения для следующей итерации ===
+                if u_prev is None:
+                    u_prev = Function(V)                         # Инициализация при первой итерации
+                u_prev.assign(u_k)                               # Копирование текущего решения
+        """
+        st.code(code, language="python")
